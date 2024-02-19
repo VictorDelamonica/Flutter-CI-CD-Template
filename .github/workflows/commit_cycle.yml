@@ -24,26 +24,30 @@ jobs:
       - name: Analyze project source
         run: flutter analyze
 
-workflows:
-  workflow_caller:
-    name: Trigger Secondary Workflow
-    runs-on: ubuntu-latest
+  trigger_acceptance_cycle:
     needs: build
-    if: github.event_name == 'push' && github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    if: success()
 
     steps:
-      - name: Trigger Secondary Workflow
+      - name: Trigger Acceptance Cycle
         uses: actions/github-script@0.9.0
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { owner, repo } = context.repo;
-            const { data: workflows } = await octokit.actions.listRepoWorkflows({
-              owner,
-              repo,
+            const { data: workflowRuns } = await github.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_file: 'acceptance_cycle.yml',
+              status: 'completed'
             });
-            const secondaryWorkflow = workflows.workflows.find(workflow => workflow.name === 'secondary_workflow.yml');
-            await octokit.actions.reRunWorkflow({
-              owner,
-              repo,
-              workflow_id: secondaryWorkflow.id,
-            });
+            
+            const successfulRuns = workflowRuns.workflow_runs.filter(run => run.conclusion === 'success');
+            if (successfulRuns.length === 0) {
+              await github.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_file: 'acceptance_cycle.yml',
+                ref: 'develop'
+              });
+            }
