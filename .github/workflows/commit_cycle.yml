@@ -44,7 +44,7 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          const workflowId = ${{ steps.get_workflow_id.outputs.workflow_id }};
+          const workflowId = process.env.WORKFLOW_ID;
           if (workflowId) {
             await github.actions.createWorkflowDispatch({
               owner: context.repo.owner,
@@ -55,3 +55,4 @@ jobs:
           } else {
             console.error('Workflow ID not found.');
           }
+
