@@ -28,26 +28,31 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: success()
-
+  
     steps:
+      - name: Get Workflow ID
+        id: get_workflow_id
+        run: |
+          echo "::set-output name=workflow_id::$(curl -s -X GET \
+          -H \"Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}\" \
+          -H \"Accept: application/vnd.github.v3+json\" \
+          https://api.github.com/repos/${{ github.repository }}/actions/workflows | \
+          jq '.workflows[] | select(.name == \"acceptance_cycle.yml\") | .id')"
+  
       - name: Trigger Acceptance Cycle
         uses: actions/github-script@0.9.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { data: workflowRuns } = await github.actions.listWorkflowRuns({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_file: 'acceptance_cycle.yml',
-              status: 'completed'
-            });
-            
-            const successfulRuns = workflowRuns.workflow_runs.filter(run => run.conclusion === 'success');
-            if (successfulRuns.length === 0) {
+            const workflowId = ${{ steps.get_workflow_id.outputs.workflow_id }};
+            if (workflowId) {
               await github.actions.createWorkflowDispatch({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                workflow_file: 'acceptance_cycle.yml',
+                workflow_id: workflowId,
                 ref: 'develop'
               });
+            } else {
+              console.error('Workflow ID not found.');
             }
+
