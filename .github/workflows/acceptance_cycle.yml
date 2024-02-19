@@ -7,7 +7,7 @@ on:
       - completed
 
 jobs:
-  build:
+  run_test:
     runs-on: ubuntu-latest
 
     steps:
