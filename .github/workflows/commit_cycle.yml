@@ -23,3 +23,27 @@ jobs:
 
       - name: Analyze project source
         run: flutter analyze
+
+workflows:
+  workflow_caller:
+    name: Trigger Secondary Workflow
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.event.workflow_run.conclusion == 'success'
+
+    steps:
+      - name: Trigger Secondary Workflow
+        uses: actions/github-script@0.9.0
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const { data: workflows } = await octokit.actions.listRepoWorkflows({
+              owner,
+              repo,
+            });
+            const secondaryWorkflow = workflows.workflows.find(workflow => workflow.name === 'secondary_workflow.yml');
+            await octokit.actions.reRunWorkflow({
+              owner,
+              repo,
+              workflow_id: secondaryWorkflow.id,
+            });
