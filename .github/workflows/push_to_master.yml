@@ -8,6 +8,7 @@ on:
 
 jobs:
   push_to_master:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -17,6 +18,7 @@ jobs:
       - name: Increment Counter
         id: increment_counter
         run: |
+          cd $GITHUB_WORKSPACE
           if [ -f counter.txt ]; then
             count=$(cat counter.txt)
             count=$((count + 1))
@@ -33,10 +35,11 @@ jobs:
             const fs = require('fs');
             const path = require('path');
 
-            const files = fs.readdirSync(path.resolve(__dirname));
+            const files = fs.readdirSync(process.env.GITHUB_WORKSPACE);
 
             await Promise.all(files.map(async (file) => {
-              const fileContent = fs.readFileSync(file, 'utf8');
+              const filePath = path.join(process.env.GITHUB_WORKSPACE, file);
+              const fileContent = fs.readFileSync(filePath, 'utf8');
               await github.repos.createOrUpdateFileContents({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
