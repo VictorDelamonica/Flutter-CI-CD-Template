@@ -31,8 +31,7 @@ jobs:
         run: |
           git config --global user.email "victor.delamonica@epitech.eu"
           git config --global user.name "VictorDelamonica"
-          git fetch origin master
-          git checkout master
+          git fetch origin develop
           count=$(cat counter.txt)
           git merge -s recursive -X ours --allow-unrelated-histories --no-ff develop "Merge from develop (#$count)"
           git push origin master
