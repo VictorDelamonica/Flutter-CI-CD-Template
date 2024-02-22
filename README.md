@@ -1,17 +1,6 @@
 # flutter_ci_cd_template
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-jdhsjdhj
+## CI/CD Status
+[![Commit Cycle](https://github.com/VictorDelamonica/Flutter-CI-CD-Template/actions/workflows/commit_cycle.yml/badge.svg?branch=master&event=workflow_run)](https://github.com/VictorDelamonica/Flutter-CI-CD-Template/actions/workflows/commit_cycle.yml)
+[![Acceptance Cycle](https://github.com/VictorDelamonica/Flutter-CI-CD-Template/actions/workflows/acceptance_cycle.yml/badge.svg?branch=master&event=workflow_run)](https://github.com/VictorDelamonica/Flutter-CI-CD-Template/actions/workflows/acceptance_cycle.yml)
+[![Push to Master](https://github.com/VictorDelamonica/Flutter-CI-CD-Template/actions/workflows/push_to_master.yml/badge.svg?branch=master&event=workflow_run)](https://github.com/VictorDelamonica/Flutter-CI-CD-Template/actions/workflows/push_to_master.yml)
