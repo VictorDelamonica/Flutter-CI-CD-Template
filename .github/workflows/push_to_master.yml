@@ -29,35 +29,15 @@ jobs:
           fi
 
       - name: Push to Master
-        uses: actions/github-script@0.9.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const fs = require('fs');
-            const path = require('path');
-
-            const files = fs.readdirSync(process.env.GITHUB_WORKSPACE);
-
-            await Promise.all(files.map(async (file) => {
-              const filePath = path.join(process.env.GITHUB_WORKSPACE, file);
-              const fileContent = fs.readFileSync(filePath, 'utf8');
-              await github.repos.createOrUpdateFileContents({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                path: file,
-                message: 'Update to master branch',
-                content: Buffer.from(fileContent).toString('base64'),
-                branch: 'master',
-                committer: {
-                  name: 'GitHub Actions',
-                  email: 'actions@github.com'
-                },
-                author: {
-                  name: 'GitHub Actions',
-                  email: 'actions@github.com'
-                }
-              });
-            }));
+        run: |
+          git config --global user.email "victor.delamonica@epitech.eu"
+          git config --global user.name "VictorDelamonica"
+          git checkout develop
+          git pull
+          git checkout master
+          count=$(cat counter.txt)
+          git merge -s recursive -X ours --allow-unrelated-histories --no-ff develop "Merge from develop (#$count)"
+          git push origin master
 
       - name: Upload Counter Artifact
         uses: actions/upload-artifact@v2
