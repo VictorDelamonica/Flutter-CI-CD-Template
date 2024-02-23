@@ -19,37 +19,44 @@ on:
       - completed
 
 jobs:
-  push_to_master:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+  merge-develop-into-master:
     runs-on: self-hosted
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout master branch
+      uses: actions/checkout@v2
+      with:
+        ref: 'master'
+        
+    - name: Configure Git
+      run: |
+        git config user.name "Master GitHub Actions Bot"
+        git config user.email "victor.delamonica@epitech.eu"
 
-      - name: Increment Counter
-        id: increment_counter
-        run: |
-          cd $GITHUB_WORKSPACE
-          if [ -f counter.txt ]; then
-            count=$(cat counter.txt)
-            count=$((count + 1))
-            echo "$count" > counter.txt
-          else
-            echo "1" > counter.txt
-          fi
+    - name: Merge develop branch into master
+      run: |
+        git fetch origin develop:develop
+        git merge --no-ff develop -m "Merge from develop (#$count)"
 
-      - name: Push to Master
-        run: |
-          git config --global user.email "victor.delamonica@epitech.eu"
-          git config --global user.name "VictorDelamonica"
-          git fetch origin develop
+    - name: Increment Counter
+      id: increment_counter
+      run: |
+        cd $GITHUB_WORKSPACE
+        if [ -f counter.txt ]; then
           count=$(cat counter.txt)
-          git merge -s recursive -X ours --allow-unrelated-histories --no-ff origin/develop "Merge from develop (#$count)"
-          git push origin master
+          count=$((count + 1))
+          echo "$count" > counter.txt
+        else
+          echo "1" > counter.txt
+        fi
 
-      - name: Upload Counter Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: push-counter
-          path: counter.txt
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: 'master'
+
+    - name: Upload Counter Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: push-counter
+        path: counter.txt
