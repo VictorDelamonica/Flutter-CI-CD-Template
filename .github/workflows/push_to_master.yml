@@ -35,7 +35,7 @@ jobs:
     - name: Merge develop branch into master
       run: |
         git fetch origin develop:develop
-        git merge --no-ff develop -m "Merge from develop (#$count)"
+        git merge --no-ff develop -m "Merge from develop (#$count)" --allow-unrelated-histories
 
     - name: Increment Counter
       id: increment_counter
