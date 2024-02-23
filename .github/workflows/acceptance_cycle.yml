@@ -28,7 +28,7 @@ on:
 
 jobs:
   run_test:
-    runs-on: ${{ inputs.runner }}
+    runs-on: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.runner || 'ubuntu-latest' }}
 
     steps:
       - uses: actions/checkout@v4
