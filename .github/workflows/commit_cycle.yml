@@ -1,5 +1,5 @@
 name: Commit Cycle
-
+run-name: Commit Cycle
 on:
   workflow_dispatch:
     inputs:
