@@ -4,15 +4,23 @@ run-name: Push to Master
 on:
   workflow_dispatch:
     inputs:
-        logLevel:
-          description: 'Log level'
-          required: true
-          default: 'warning'
-          type: choice
-          options:
-          - info
-          - warning
-          - debug
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
+      runner:
+        description: "Runner Agent"
+        required: true
+        default: 'ubuntu-lastest'
+        type: choice
+        options:
+        - ubuntu-lastest
+        - self-hosted
   workflow_run:
     workflows: ["Acceptance Cycle"]
     types:
@@ -20,11 +28,8 @@ on:
 
 jobs:
   merge-develop-into-master:
-    runs-on: ${{ matrix.runner }}
-    strategy:
-      fail-fast: false
-      matrix:
-        runner: [self-hosted, ubuntu-latest]
+    runs-on: ${{ inputs.runner }}
+
     steps:
     - name: Checkout master branch
       uses: actions/checkout@v2
