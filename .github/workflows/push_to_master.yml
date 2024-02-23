@@ -2,6 +2,17 @@ name: Push to Master
 
 
 on:
+  workflow_dispatch:
+    inputs:
+        logLevel:
+          description: 'Log level'
+          required: true
+          default: 'warning'
+          type: choice
+          options:
+          - info
+          - warning
+          - debug
   workflow_run:
     workflows: ["Acceptance Cycle"]
     types:
