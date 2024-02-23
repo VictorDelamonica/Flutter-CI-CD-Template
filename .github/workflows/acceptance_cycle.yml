@@ -1,4 +1,5 @@
 name: Acceptance Cycle
+run-name: Acceptance Cycle
 
 on:
   workflow_run:
@@ -8,7 +9,11 @@ on:
 
 jobs:
   run_test:
-    runs-on: self-hosted
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [self-hosted, ubuntu-latest]
 
     steps:
       - uses: actions/checkout@v4
