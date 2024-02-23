@@ -1,6 +1,26 @@
 name: Acceptance Cycle
+run-name: Acceptance Cycle
 
 on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
+      runner:
+        description: "Runner Agent"
+        required: true
+        default: 'ubuntu-lastest'
+        type: choice
+        options:
+        - ubuntu-lastest
+        - self-hosted
   workflow_run:
     workflows: ["Commit Cycle"]
     types:
@@ -8,7 +28,7 @@ on:
 
 jobs:
   run_test:
-    runs-on: self-hosted
+    runs-on: ${{ inputs.runner }}
 
     steps:
       - uses: actions/checkout@v4
