@@ -1,4 +1,5 @@
 name: Commit Cycle
+run-name: Commit Cycle
 
 on:
   push:
@@ -8,7 +9,11 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [self-hosted, ubuntu-latest]
 
     steps:
       - uses: actions/checkout@v4
