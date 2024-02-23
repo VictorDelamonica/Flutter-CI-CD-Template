@@ -35,16 +35,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         ref: 'master'
-        
-    - name: Configure Git
-      run: |
-        git config user.name "Master GitHub Actions Bot"
-        git config user.email "victor.delamonica@epitech.eu"
-    - name: Merge develop branch into master
-      run: |
-        git fetch origin develop:develop
-        count=$(cat counter.txt)
-        git merge -s recursive -X theirs --no-ff develop -m "Merge from develop (#$count)" --allow-unrelated-histories
+
     - name: Increment Counter
       id: increment_counter
       run: |
@@ -56,6 +47,16 @@ jobs:
         else
           echo "1" > counter.txt
         fi
+        
+    - name: Configure Git
+      run: |
+        git config user.name "Master GitHub Actions Bot"
+        git config user.email "victor.delamonica@epitech.eu"
+    - name: Merge develop branch into master
+      run: |
+        git fetch origin develop:develop
+        count=$(cat counter.txt)
+        git merge -s recursive -X theirs --no-ff develop -m "Merge from develop (#$count)" --allow-unrelated-histories
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
