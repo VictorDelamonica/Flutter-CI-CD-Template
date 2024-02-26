@@ -76,7 +76,7 @@ jobs:
               workflow_id: workflowId,
               ref: 'develop',
               inputs: {
-                if [${{ github.ref }} =~ ^refs/tags/]
+                if ${{ github.ref }} =~ ^refs/tags/
                   tag
               }
             });
