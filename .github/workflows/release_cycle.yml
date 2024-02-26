@@ -1,0 +1,52 @@
+name: Release Cycle
+run-name: Release Cycle
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
+      runner:
+        description: "Runner Agent"
+        required: true
+        default: 'ubuntu-latest'
+        type: choice
+        options:
+        - ubuntu-latest
+        - self-hosted
+
+jobs:
+  run_test:
+    runs-on: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.runner || 'ubuntu-latest' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.16.9'
+          channel: 'stable'
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Set up Flutter version
+        uses: julianzatloukal/flutter-version@v1
+        with:
+          version: ${{ github.run_number }}
+
+      - name: Release APK
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/app/outputs/flutter-apk/app-release.apk
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release_name: Release ${{ github.run_number }}
+          body: |
+            Release ${{ github.run_number }}
