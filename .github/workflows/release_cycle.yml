@@ -69,7 +69,7 @@ jobs:
           files: build/app/outputs/flutter-apk/app-release.apk
           token: ${{ secrets.GITHUB_TOKEN }}
           name: Release ${{ github.run_number }}
-          tag_name: "0.0.1"
+          tag_name: ${{ github.event.inputs.tagVersion }}
           generate_release_notes: true
           body: |
             Release ${{ github.run_number }}
