@@ -78,6 +78,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           if [ -f tagVersion.txt ]; then
+            echo "Already exist"
           else
             echo "0.0.1" > tagVersion.txt
           fi
