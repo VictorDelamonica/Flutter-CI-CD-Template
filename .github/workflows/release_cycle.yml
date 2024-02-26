@@ -10,22 +10,22 @@ on:
         default: 'warning'
         type: choice
         options:
-        - info
-        - warning
-        - debug
+          - info
+          - warning
+          - debug
       runner:
         description: "Runner Agent"
         required: true
         default: 'ubuntu-latest'
         type: choice
         options:
-        - ubuntu-latest
-        - self-hosted
+          - ubuntu-latest
+          - self-hosted
       tagVersion:
         description: "Tag version"
         required: true
         type: string
-        
+
 jobs:
   Build_Apk:
     runs-on: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.runner || 'ubuntu-latest' }}
@@ -56,8 +56,15 @@ jobs:
         with:
           name: release-apk
           path: |
-            build/app/outputs/flutter-apk/app-release.apk
-            new_version.txt
+            build/app/outputs/flutter-apk/
+
+  Debug_Build_Output:
+    runs-on: ubuntu-latest
+    needs: Upload_Apk
+    steps:
+      - name: List Contents of build directory
+        run: |
+          ls -R $GITHUB_WORKSPACE/build
 
   Release_Apk:
     runs-on: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.runner || 'ubuntu-latest' }}
@@ -66,7 +73,7 @@ jobs:
       - name: Release APK
         uses: softprops/action-gh-release@v1
         with:
-          files: ${{ github.workspace }}/release-apk/build/app/outputs/flutter-apk/app-release.apk
+          files: build/app/outputs/flutter-apk/*
           token: ${{ secrets.GITHUB_TOKEN }}
           name: Release ${{ github.run_number }}
           tag_name: ${{ github.event.inputs.tagVersion }}
@@ -88,4 +95,3 @@ jobs:
           IFS='.' read -r major minor patch <<< "$current_version"
           next_version="$major.$minor.$((patch + 1))"
           echo "$next_version" > tagVersion.txt
-
