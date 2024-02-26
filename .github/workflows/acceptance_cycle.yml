@@ -19,7 +19,7 @@ on:
         default: 'ubuntu-latest'
         type: choice
         options:
-        - ubuntu-lastest
+        - ubuntu-latest
         - self-hosted
   workflow_run:
     workflows: ["Commit Cycle"]

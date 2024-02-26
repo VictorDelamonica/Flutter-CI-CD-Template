@@ -19,7 +19,7 @@ on:
             default: 'ubuntu-latest'
             type: choice
             options:
-            - ubuntu-lastest
+            - ubuntu-latest
             - self-hosted
           tag:
             description: "v*"
