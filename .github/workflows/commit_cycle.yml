@@ -22,17 +22,14 @@ on:
             - ubuntu-lastest
             - self-hosted
           tag:
-          description: "v*"
-          required: false
-          type: string
+            description: "v*"
+            required: false
+            type: string
 
-            
   push:
     branches: [ "develop" ]
     tags:
       - 'v*'
-    pull_request:
-      branches: [ "develop" ]
 
 jobs:
   build:
