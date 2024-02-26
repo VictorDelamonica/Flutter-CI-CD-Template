@@ -68,7 +68,7 @@ jobs:
       - name: Release APK
         uses: softprops/action-gh-release@v1
         with:
-          files: build/app/outputs/flutter-apk/*
+          files: build/app/outputs/flutter-apk/app-release.apk
           token: ${{ secrets.GITHUB_TOKEN }}
           name: Release ${{ github.run_number }}
           tag_name: ${{ github.event.inputs.tagVersion }}
