@@ -21,10 +21,18 @@ on:
             options:
             - ubuntu-lastest
             - self-hosted
+          tag:
+          description: "v*"
+          required: false
+          type: string
+
+            
   push:
     branches: [ "develop" ]
   pull_request:
     branches: [ "develop" ]
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -69,7 +77,11 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: workflowId,
-              ref: 'develop'
+              ref: 'develop',
+              inputs: {
+                if [${{ github.ref }} =~ ^refs/tags/]
+                  tag
+              }
             });
           } else {
             console.error('Workflow ID not found.');
