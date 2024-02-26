@@ -16,7 +16,7 @@ on:
       runner:
         description: "Runner Agent"
         required: true
-        default: 'ubuntu-lastest'
+        default: 'ubuntu-latest'
         type: choice
         options:
         - ubuntu-lastest
