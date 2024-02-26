@@ -21,9 +21,14 @@ on:
         options:
         - ubuntu-latest
         - self-hosted
-
+      tagVersion:
+        description: "Tag version"
+        required: true
+        type: string
+        default: ${{ readFile('tagVersion.txt') || '0.0.1' }} #
+        
 jobs:
-  run_test:
+  Build_Apk:
     runs-on: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.runner || 'ubuntu-latest' }}
 
     steps:
@@ -42,6 +47,11 @@ jobs:
           echo "Version Code: $versionCode"
           echo "Version Name: $versionName"
           echo "New Version Name: $((versionName + 1))" > new_version.txt
+
+  Upload_Apk:
+    runs-on: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.runner || 'ubuntu-latest' }}
+    needs: Build_Apk
+    steps:
       - name: Upload APK and Version File
         uses: actions/upload-artifact@v2
         with:
@@ -50,11 +60,32 @@ jobs:
             build/app/outputs/flutter-apk/app-release.apk
             new_version.txt
 
+  Release_Apk:
+    runs-on: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.runner || 'ubuntu-latest' }}
+    needs: Upload_Apk
+    steps:
       - name: Release APK
         uses: softprops/action-gh-release@v1
         with:
           files: build/app/outputs/flutter-apk/app-release.apk
           token: ${{ secrets.GITHUB_TOKEN }}
-          release_name: Release ${{ github.run_number }}
+          name: Release ${{ github.run_number }}
+          tag_name: ${{ github.event.inputs.tagVersion }}
+          generate_release_notes: true
           body: |
             Release ${{ github.run_number }}
+
+      - name: Increment tag version
+        run: |
+          cd $GITHUB_WORKSPACE
+          if [ -f tagVersion.txt ]; then
+          else
+            echo "0.0.1" > tagVersion.txt
+          fi
+          current_version=$(cat tagVersion.txt)
+          
+          # Increment version
+          IFS='.' read -r major minor patch <<< "$current_version"
+          next_version="$major.$minor.$((patch + 1))"
+          echo "$next_version" > tagVersion.txt
+
