@@ -35,12 +35,20 @@ jobs:
           channel: 'stable'
 
       - name: Build APK
-        run: flutter build apk --release
-
-      - name: Set up Flutter version
-        uses: julianzatloukal/flutter-version@v1
+        run: |
+          flutter build apk --release
+          versionCode=$(cat build/app/outputs/flutter-apk/app-release.properties | grep "versionCode" | cut -d'=' -f2)
+          versionName=$(cat build/app/outputs/flutter-apk/app-release.properties | grep "versionName" | cut -d'=' -f2)
+          echo "Version Code: $versionCode"
+          echo "Version Name: $versionName"
+          echo "New Version Name: $((versionName + 1))" > new_version.txt
+      - name: Upload APK and Version File
+        uses: actions/upload-artifact@v2
         with:
-          version: ${{ github.run_number }}
+          name: release-apk
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            new_version.txt
 
       - name: Release APK
         uses: softprops/action-gh-release@v1
