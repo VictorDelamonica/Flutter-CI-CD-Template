@@ -41,7 +41,7 @@ jobs:
       - name: Build APK
         run: |
           cd $GITHUB_WORKSPACE
-          flutter build apk --release && echo "::set-output name=built-apk::build/app/outputs/flutter-apk/"'
+          flutter build apk --release && echo "::set-output name=built-apk::build/app/outputs/flutter-apk/"
 
   Upload_Apk:
     runs-on: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.runner || 'ubuntu-latest' }}
