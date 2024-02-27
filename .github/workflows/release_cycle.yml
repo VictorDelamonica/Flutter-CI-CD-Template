@@ -41,26 +41,17 @@ jobs:
       - name: Build APK
         run: |
           cd $GITHUB_WORKSPACE
-          flutter build apk --release
+          flutter build apk --release && echo "::set-output name=built-apk::build/app/outputs/flutter-apk/"'
 
   Upload_Apk:
     runs-on: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.runner || 'ubuntu-latest' }}
     needs: Build_Apk
     steps:
-      - name: Upload APK and Version File
+      - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
-          name: release-apk
-          path: |
-            $GITHUB_WORKSPACE/build/app/outputs/flutter-apk/app-release.apk
-
-  Debug_Build_Output:
-    runs-on: ubuntu-latest
-    needs: Upload_Apk
-    steps:
-      - name: List Contents of build directory
-        run: |
-          ls -R $GITHUB_WORKSPACE/build
+          name: Built APK
+          path: ${{ steps.build.outputs.built-apk }}
 
   Release_Apk:
     runs-on: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.runner || 'ubuntu-latest' }}
@@ -69,7 +60,7 @@ jobs:
       - name: Release APK
         uses: softprops/action-gh-release@v1
         with:
-          files: build/app/outputs/flutter-apk/app-release.apk
+          files: ${{ steps.build.outputs.built-apk }}
           token: ${{ secrets.GITHUB_TOKEN }}
           name: Release ${{ github.run_number }}
           tag_name: ${{ github.event.inputs.tagVersion }}
