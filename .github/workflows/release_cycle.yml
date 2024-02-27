@@ -40,6 +40,7 @@ jobs:
 
       - name: Build APK
         run: |
+          cd $GITHUB_WORKSPACE
           flutter build apk --release
 
   Upload_Apk:
@@ -51,7 +52,7 @@ jobs:
         with:
           name: release-apk
           path: |
-            build/app/outputs/flutter-apk/app-release.apk
+            $GITHUB_WORKSPACE/build/app/outputs/flutter-apk/app-release.apk
 
   Debug_Build_Output:
     runs-on: ubuntu-latest
