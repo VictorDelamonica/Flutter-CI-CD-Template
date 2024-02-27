@@ -40,33 +40,12 @@ jobs:
 
       - name: Build APK
         run: |
-          cd $GITHUB_WORKSPACE
-          flutter build apk --release && echo "::set-output name=built-apk::build/app/outputs/flutter-apk/"
+          flutter build apk --release
 
-  Upload_Apk:
-    runs-on: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.runner || 'ubuntu-latest' }}
-    needs: Build_Apk
-    steps:
-      - name: Upload APK
-        uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v1
         with:
-          name: Built APK
-          path: ${{ steps.build.outputs.built-apk }}
-
-  Release_Apk:
-    runs-on: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.runner || 'ubuntu-latest' }}
-    needs: Upload_Apk
-    steps:
-      - name: Release APK
-        uses: softprops/action-gh-release@v1
-        with:
-          files: ${{ steps.build.outputs.built-apk }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          name: Release ${{ github.run_number }}
-          tag_name: ${{ github.event.inputs.tagVersion }}
-          generate_release_notes: true
-          body: |
-            Release ${{ github.run_number }}
+          name: release-apk
+          path: build/app/outputs/apk/release/app-release.apk
 
       - name: Increment tag version
         run: |
