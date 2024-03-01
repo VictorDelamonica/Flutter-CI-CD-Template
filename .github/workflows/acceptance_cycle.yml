@@ -33,8 +33,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - with:
-          ref: 'develop'
 
       - uses: subosito/flutter-action@v2
         with:
@@ -58,7 +56,6 @@ jobs:
           https://api.github.com/repos/${{ github.repository }}/actions/workflows | \
           grep -E '"name":\s*"[^"]*push_to_master\.yml[^"]*",' | \
           awk -F'"id":' '{print $2}' | awk -F',' '{print $1}')
-
     - name: Trigger Push to Master
       uses: actions/github-script@0.9.0
       with:
